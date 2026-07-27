@@ -231,6 +231,7 @@
             <button class="api-tab" id="tab-btn-toml">Stellar TOML</button>
             <button class="api-tab" id="tab-btn-kyc">KYC Upload</button>
             <button class="api-tab" id="tab-btn-stats">Admin Stats</button>
+            <button class="api-tab" id="tab-btn-admin-kyc">Admin: KYC Override</button>
           </div>
           <div class="api-code-container">
             <div class="code-header">
@@ -248,6 +249,23 @@
     "userId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
     "notes": "Savings Deposit"
   }'</code></pre>
+          </div>
+
+          <!-- Admin KYC Override Panel (issue #1574) -->
+          <div id="admin-kyc-panel" class="admin-kyc-panel" hidden>
+            <div class="admin-kyc-header">
+              <h3>Compliance — Manual KYC Overrides</h3>
+              <p class="admin-kyc-help">
+                Admin role required. Toggle the switch to manually override
+                the automated KYC decision for an applicant after review.
+              </p>
+              <div class="admin-kyc-toolbar">
+                <button id="admin-kyc-refresh" class="admin-kyc-btn">Refresh list</button>
+                <span id="admin-kyc-role-gate" class="admin-kyc-role-gate"></span>
+                <span id="admin-kyc-status" class="admin-kyc-status">Idle</span>
+              </div>
+            </div>
+            <div id="admin-kyc-table-wrap" class="admin-kyc-table-wrap"></div>
           </div>
         </div>
       </div>

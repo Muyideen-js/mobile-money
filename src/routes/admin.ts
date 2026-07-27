@@ -51,8 +51,10 @@ import { ProviderConfigCacheInvalidation } from "../services/cacheAside";
 import { resetCircuitBreakerForProvider } from "../utils/circuitBreaker";
 import { ERROR_CODES } from "../constants/errorCodes";
 import { createError } from "../middleware/errorHandler";
+import { AdminController } from "../controllers/adminController";
 
 const router = Router();
+const adminController = new AdminController();
 const IMPERSONATION_TOKEN_EXPIRES_IN = "15m";
 const IMPERSONATION_TOKEN_TTL_MS = 15 * 60 * 1000;
 const READ_ONLY_IMPERSONATION_MESSAGE = "Read-only mode active";
@@ -1077,6 +1079,45 @@ router.get("/providers/balances", requireAdmin, async (req, res) => {
     data: balances,
   });
 });
+
+/**
+ * =========================
+ * COMPLIANCE — Manual override (issue #1574)
+ * =========================
+ *
+ * Admin-only endpoints that let compliance officers flip a KYC decision
+ * after manual review. requireAdmin middleware restricts the surface to
+ * the "admin" / "super-admin" roles — compliance_officer will be
+ * rejected with 403, so overrides cannot be performed by lower roles.
+ */
+
+router.get(
+  "/kyc/applicants",
+  requireAdmin,
+  logAdminAction("LIST_KYC_APPLICANTS"),
+  adminController.listKycApplicants,
+);
+
+router.get(
+  "/kyc/applicants/:applicantId",
+  requireAdmin,
+  logAdminAction("GET_KYC_APPLICANT"),
+  adminController.getKycApplicant,
+);
+
+router.post(
+  "/kyc/applicants/:applicantId/override",
+  requireAdmin,
+  logAdminAction("TOGGLE_KYC_MANUAL_OVERRIDE"),
+  adminController.toggleKycOverride,
+);
+
+router.post(
+  "/kyc/upgrade-requests/:id/override",
+  requireAdmin,
+  logAdminAction("TOGGLE_KYC_UPGRADE_OVERRIDE"),
+  adminController.toggleUpgradeOverride,
+);
 
 /**
  * =========================
